@@ -2,6 +2,18 @@ const fs = require('fs')
 
 const tours = JSON.parse(fs.readFileSync(`${__dirname}/../dev-data/data/tours-simple.json`));
 
+//Middleware for checking ID
+const checkID = (req, res, next, val) => {
+  console.log(`Tour id is: ${val}`);
+  if(req.params.id * 1 > tours.length){
+    return res.status(404).json({
+        status: 'fail',
+        message: 'Invalid id.'
+    });
+  }
+  next();
+}
+
 const getAllTours =  (req, res) => {
   res.status(200).json({
       status: 'success',
@@ -42,12 +54,6 @@ const createTour = (req, res) => {
 }
 
 const updateTour = (req, res) => {
-  if(req.params.id * 1 > tours.length){
-      return res.status(404).json({
-          status: 'fail',
-          message: 'Invalid id.'
-      });
-  }
   res.status(200).json({
       status: 'success',
       data: {
@@ -57,13 +63,6 @@ const updateTour = (req, res) => {
 }
 
 const deleteTour = (req, res) => {
-  if(req.params.id * 1 > tours.length){
-      return res.status(404).json({
-          status: 'fail',
-          message: 'Invalid id'
-      })
-  }
-
   res.status(204).json({
       status: 'success',
       data: null
@@ -75,5 +74,6 @@ module.exports = {
   getTourById,
   createTour,
   updateTour,
-  deleteTour
+  deleteTour,
+  checkID
 }
