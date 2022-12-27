@@ -1,9 +1,11 @@
 const fs = require('fs')
 const express = require('express');
+const morgan = require('morgan')
 
 const app = express();
 
-//middleware
+//Middlewares
+app.use(morgan('dev'));
 app.use(express.json());
 
 app.use((req, res, next) => {
@@ -19,7 +21,7 @@ app.use((req, res, next) => {
 const tours = JSON.parse(fs.readFileSync(`${__dirname}/dev-data/data/tours-simple.json`));
 
 
-//Functions
+//Tours routes functions
 const getAllTours =  (req, res) => {
     res.status(200).json({
         status: 'success',
@@ -88,16 +90,67 @@ const deleteTour = (req, res) => {
     })
 }
 
+//User routes functions
+const getAllUsers = (req, res) => {
+    res.status(500).json({
+        status: 'error',
+        message: 'Route not implemented yet!'
+    })
+}
+
+const getUserById = (req, res) => {
+    res.status(500).json({
+        status: 'error',
+        message: 'Route not implemented yet!'
+    })
+}
+
+const createUser = (req, res) => {
+    res.status(500).json({
+        status: 'error',
+        message: 'Route not implemented yet!'
+    })
+}
+
+const updateUser = (req, res) => {
+    res.status(500).json({
+        status: 'error',
+        message: 'Route not implemented yet!'
+    })
+}
+
+const deleteUser = (req, res) => {
+    res.status(500).json({
+        status: 'error',
+        message: 'Route not implemented yet!'
+    })
+}
+
 //Routes
-app.route('/api/v1/tours')
+const tourRouter = express.Router();
+tourRouter.route('/')
     .get(getAllTours)
     .post(createTour)
 
-app.route('/api/v1/tours/:id')
+tourRouter.route('/:id')
     .get(getTourById)
     .patch(patchTour)
     .delete(deleteTour)
 
+//User routes
+const userRouter = express.Router();
+userRouter.route('/')
+    .get(getAllUsers)
+    .post(createUser)
+
+userRouter.route('/:id')
+    .get(getUserById)
+    .patch(updateUser)
+    .delete(deleteUser)
+
+
+app.use('/api/v1/tours', tourRouter);
+app.use('/api/v1/users', userRouter);
 
 
 
