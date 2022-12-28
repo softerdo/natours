@@ -14,6 +14,14 @@ const checkID = (req, res, next, val) => {
   next();
 }
 
+//Middleware to checkBody
+const checkBody = (req, res, next) => {
+  if(!req.body.name || !req.body.price){
+     return res.status(404).json({ message: 'No body!!!'});
+  }
+  next();
+}
+
 const getAllTours =  (req, res) => {
   res.status(200).json({
       status: 'success',
@@ -75,5 +83,6 @@ module.exports = {
   createTour,
   updateTour,
   deleteTour,
-  checkID
+  checkID,
+  checkBody
 }
