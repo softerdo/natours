@@ -1,4 +1,5 @@
 const fs = require('fs')
+const tourModel = require('../models/tourModel');
 
 const tours = JSON.parse(fs.readFileSync(`${__dirname}/../dev-data/data/tours-simple.json`));
 
@@ -22,31 +23,70 @@ const checkBody = (req, res, next) => {
   next();
 }
 
-const getAllTours =  (req, res) => {
-  res.status(200).json({
+const getAllTours =  async (req, res) => {
+ try{
+  const tours = await tourModel.find();
+
+ res.status(200).json({
+  status: 'success',
+  results: tours.length,
+  data: { tours}
+ })
+ }
+ catch(err){
+  res.status(404).json({
+    status: 'fail',
+    message: err
+  })
+ }
+}
+
+const getTourById = async (req, res) => {
+  try{
+    const tour = await tourModel.findById(req.params.id);
+    res.status(200).json({
       status: 'success',
-      requestedAt: req.requestTime,
-      results: tours.length,
-      data: {
-          tours: tours
-      }
-  });
-}
-
-const getTourById = (req, res) => {
-  const id = req.params.id * 1;
-  const tour = tours.find(el => el.id === id)
-  if(tour){
-      res.status(200).json({
-          status: 'success',
-          data: { tour }
-      });
-  }else{
-      res.status(404).json({message: 'Invalid id.'});
+      data: { tour }
+    });
   }
+  catch(err){
+    res.status(404).json({message: 'Invalid id.'});
+  }
+  
 }
 
-const createTour = (req, res) => {
+// const getTourById = (req, res) => {
+//   const id = req.params.id * 1;
+//   const tour = tours.find(el => el.id === id)
+//   if(tour){
+//       res.status(200).json({
+//           status: 'success',
+//           data: { tour }
+//       });
+//   }else{
+//       res.status(404).json({message: 'Invalid id.'});
+//   }
+// }
+
+const createTour = async (req, res) => {
+  try{
+    const newTour = await tourModel.create(req.body);
+    res.status(201).json({
+      status: 'success',
+      data:{
+        tour: newTour
+      }
+    });
+  }catch(err){
+    res.status(400).json({
+      status: 'error',
+      message: 'Invalid dataset!'
+    });
+  }
+
+  
+    
+
   const newId = tours[tours.length - 1].id + 1;
   const newTour = Object.assign({ id: newId }, req.body)
 
